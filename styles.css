@@ -3,7 +3,7 @@
 
 :root {
     --bg-color: #121212;
-    --card-bg: rgba(20, 24, 20, 0.9);   /* Verde oscuro traslúcido estilo VGUI */
+    --card-bg: rgba(20, 24, 20, 0.92);  /* Verde oscuro traslúcido estilo VGUI */
     --text-main: #b2b8ad;               /* Color gris/militar del menú CS */
     --text-hover: #ffffff;
     --accent-cs: #5d793e;               /* Verde HUD CS */
@@ -12,24 +12,30 @@
     --font-cs: 'Tahoma', 'Share Tech Mono', 'Verdana', sans-serif;
 }
 
-* {
+*, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
     font-family: var(--font-cs);
 }
 
+html, body {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden; /* Elimina cualquier barra de scroll horizontal en móviles */
+    min-height: 100vh;
+}
+
 body {
-    background: linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), 
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), 
                 url('https://wallpaperaccess.com/full/4918071.jpg') no-repeat center center fixed;
     background-size: cover;
     color: var(--text-main);
-    min-height: 100vh;
     text-transform: uppercase;
 }
 
 /* =============================================================
-   1. MOBILE FIRST (< 768px): BARRA SUPERIOR Y TARJETAS COMPACTAS
+   1. MOBILE FIRST (< 768px): BARRA COMPACTA Y TARJETAS CENTRADAS
    ============================================================= */
 
 .navbar {
@@ -37,39 +43,52 @@ body {
     top: 0;
     left: 0;
     width: 100%;
+    max-width: 100vw;
     background-color: rgba(10, 12, 10, 0.95);
     border-bottom: 2px solid var(--accent-cs);
-    padding: 0.4rem 0.6rem;
+    padding: 0.4rem 0.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     z-index: 1000;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
-    gap: 0.3rem;
 }
 
+/* Ajuste del logo/título para que no ocupe demasiado espacio */
 .navbar h1 {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     letter-spacing: 0.5px;
     color: var(--accent-yellow);
     font-family: 'Impact', 'Arial Black', sans-serif;
     text-shadow: 1px 1px 2px #000;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 42%;
+    flex-shrink: 1;
+}
+
+/* Control del tamaño si usas una imagen de logo */
+.navbar img, .navbar .logo-img {
+    max-height: 22px;
+    max-width: 110px;
+    object-fit: contain;
+    flex-shrink: 1;
 }
 
 .navbar nav {
     display: flex;
     align-items: center;
-    gap: 0.3rem;
-    flex-wrap: nowrap;
+    gap: 0.25rem;
+    flex-shrink: 0;
 }
 
 .navbar button {
     background: rgba(0, 0, 0, 0.6);
     border: 1px solid var(--accent-cs);
     color: var(--text-main);
-    padding: 0.3rem 0.4rem;
-    font-size: 0.65rem;
+    padding: 0.25rem 0.4rem;
+    font-size: 0.62rem;
     font-weight: bold;
     cursor: pointer;
     border-radius: 2px;
@@ -82,11 +101,35 @@ body {
     color: #fff;
 }
 
+/* Botón de Sonido */
+.sound-btn {
+    background: transparent !important;
+    border: none !important;
+    color: var(--text-main);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    font-size: 0.85rem;
+}
+
+/* Contenedor principal alineado estrictamente al centro */
 .container {
-    padding: 0.8rem 0.6rem;
+    padding: 1rem 0.8rem;
     width: 100%;
-    max-width: 480px;
+    max-width: 100%;
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.home-view {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .home-view h2 {
@@ -96,15 +139,19 @@ body {
     color: #ffffff;
     font-size: 0.95rem;
     text-shadow: 2px 2px 4px #000;
+    width: 100%;
 }
 
-/* Galería de tarjetas en Celular */
+/* Galería de tarjetas perfectamente centradas */
 .gallery-grid {
     display: flex;
     flex-direction: column;
-    gap: 0.7rem;
+    gap: 0.8rem;
     align-items: center;
+    justify-content: center;
     width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
 }
 
 .character-card {
@@ -115,10 +162,12 @@ body {
     cursor: pointer;
     transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
     width: 100%;
-    max-width: 310px;
+    max-width: 300px;
+    margin: 0 auto;
     backdrop-filter: blur(4px);
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 .character-card:active {
@@ -129,37 +178,41 @@ body {
     width: 100%;
     height: 110px;
     object-fit: cover;
+    object-position: center 20%;
     border-bottom: 1px solid var(--border-cs);
 }
 
 .character-card h3 {
-    margin: 0.4rem 0.4rem 0.1rem;
-    font-size: 0.82rem;
+    margin: 0.4rem 0.4rem 0.2rem;
+    font-size: 0.8rem;
     color: #ffffff;
     text-align: center;
 }
 
 .character-card p {
-    padding: 0 0.5rem 0.5rem;
-    font-size: 0.7rem;
+    padding: 0 0.6rem 0.6rem;
+    font-size: 0.68rem;
     color: #a0a0a0;
-    line-height: 1.2;
+    line-height: 1.25;
     text-align: center;
     text-transform: none;
 }
 
-/* Chat Box */
+/* Chat Box en móvil */
 .chat-box {
     display: flex;
     flex-direction: column;
     height: 75vh;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
     background-color: var(--card-bg);
     border: 1px solid var(--border-cs);
     border-radius: 4px;
 }
 
 .chat-header {
-    padding: 0.8rem;
+    padding: 0.6rem 0.8rem;
     background-color: rgba(10, 10, 10, 0.9);
     border-bottom: 1px solid var(--border-cs);
     display: flex;
@@ -168,7 +221,7 @@ body {
 }
 
 .chat-header h3 {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: var(--accent-yellow);
 }
 
@@ -183,11 +236,11 @@ body {
 
 .message {
     max-width: 88%;
-    padding: 0.6rem 0.8rem;
+    padding: 0.5rem 0.7rem;
     border-radius: 4px;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     text-transform: none;
-    line-height: 1.4;
+    line-height: 1.35;
 }
 
 .message.user {
@@ -205,7 +258,7 @@ body {
 }
 
 .message .sender-name {
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     color: var(--accent-yellow);
     margin-bottom: 0.2rem;
     display: block;
@@ -214,7 +267,7 @@ body {
 
 .chat-input-area {
     display: flex;
-    padding: 0.6rem;
+    padding: 0.5rem;
     gap: 0.4rem;
     background-color: rgba(10, 10, 10, 0.9);
     border-top: 1px solid var(--border-cs);
@@ -222,47 +275,36 @@ body {
 
 .chat-input-area input {
     flex: 1;
-    padding: 0.7rem;
+    padding: 0.6rem;
     background: #111;
     border: 1px solid #333;
     color: #fff;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     border-radius: 2px;
     text-transform: none;
 }
 
 .chat-input-area button {
-    padding: 0.7rem 1rem;
+    padding: 0.6rem 0.9rem;
     background-color: var(--accent-cs);
     border: none;
     color: white;
     font-weight: bold;
     cursor: pointer;
-}
-
-/* Botón de Sonido en Móvil */
-.sound-btn {
-    background: transparent !important;
-    border: none !important;
-    color: var(--text-main);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4px;
+    font-size: 0.8rem;
 }
 
 /* =============================================================
    2. TABLET Y DESKTOP (min-width: 768px): MENÚ CLÁSICO CS 1.6 ABAJO A LA IZQUIERDA
    ============================================================= */
 @media (min-width: 768px) {
-    /* Menú estilo CS 1.6 flotante abajo a la izquierda */
     .navbar {
         position: fixed;
         bottom: 35px;
         left: 35px;
         top: auto;
         width: auto;
+        max-width: none;
         background-color: transparent;
         border-bottom: none;
         box-shadow: none;
@@ -277,7 +319,13 @@ body {
     .navbar h1 {
         font-size: 1.2rem;
         margin-top: 6px;
+        max-width: none;
         white-space: normal;
+    }
+
+    .navbar img, .navbar .logo-img {
+        max-height: 40px;
+        max-width: 220px;
     }
 
     .navbar nav {
@@ -304,7 +352,6 @@ body {
         transform: translateX(3px);
     }
 
-    /* Adaptación de contenido para Tablet */
     .container {
         padding: 2rem;
         max-width: 768px;
@@ -312,6 +359,7 @@ body {
     }
 
     .gallery-grid {
+        max-width: 100%;
         flex-direction: row;
         justify-content: center;
         align-items: stretch;
@@ -324,7 +372,7 @@ body {
     }
 
     .character-card img {
-        height: 190px;
+        height: 180px;
     }
 }
 
