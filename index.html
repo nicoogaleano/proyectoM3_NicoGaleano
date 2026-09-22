@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS 1.6 Chat </title>
+    <link rel="stylesheet" href="styles.css">
+    
+</head>
+<body>
+
+    <!-- Audio de fondo (gamestartup.mp3) -->
+<audio id="bg-music" loop>
+    <source src="assets/gamestartup.mp3" type="audio/mpeg">
+    Tu navegador no soporta el elemento de audio.
+</audio>
+
+
+    <header class="navbar">
+        <h1><span class="logo-steam">
+        <img src="assets/game_menu.png" width="300" height="auto" alt="Logo CS 1.6" class="cs-logo"></span></h1>
+      <nav class="cs-main-menu">
+    <button class="cs-menu-item" onclick="navigate('/home')">Inicio</button>
+    <button class="cs-menu-item" onclick="navigate('/chat')">Consola de Radio</button>
+    <button class="cs-menu-item" onclick="navigate('/about')">About</button>
+    
+</div>
+<button id="toggle-sound" class="sound-btn" aria-label="Sonido"></button>
+
+</nav>
+    </header>
+
+    <main id="app" class="container">
+        <!-- El contenido de las vistas se renderiza aquí -->
+    </main>
+
+    <script type="module" src="src/chat.js"></script>
+    <script type="module" src="src/app.js"></script>
+  
+
+    
+</body>
+</html>
