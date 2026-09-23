@@ -1,5 +1,8 @@
 // src/chat.js
 
+// Flag global para control anti-spam
+let isSending = false;
+
 // 1. Obtener la clave de historial según la facción activa
 function getHistoryKey() {
     const character = localStorage.getItem('selectedCharacter') || 'gign';
@@ -38,8 +41,25 @@ function saveMessages(messages) {
     localStorage.setItem(key, JSON.stringify(messages));
 }
 
-// 4. Inicializar el chat
+// 4. Inicializar el chat y limpiar/restablecer la interfaz
 window.initChat = function() {
+    // Restablecer estado anti-spam por si se cambió de vista en medio de un envío
+    isSending = false;
+    
+    const input = document.getElementById('user-input');
+    const submitBtn = document.querySelector('#chat-form button, .chat-input-area button');
+    
+    if (input) {
+        input.disabled = false;
+        input.value = '';
+    }
+    if (submitBtn) {
+        submitBtn.disabled = false;
+    }
+
+    showTypingIndicator(false);
+
+    // Cargar y renderizar los mensajes limpios del personaje activo
     const messages = loadMessages();
     renderMessages(messages);
 };
@@ -49,6 +69,7 @@ function renderMessages(messages) {
     const container = document.getElementById('chat-messages');
     if (!container) return;
 
+    // LIMPIEZA CLAVE: Elimina cualquier chat visible anterior
     container.innerHTML = '';
 
     messages.forEach(msg => {
@@ -70,13 +91,26 @@ function renderMessages(messages) {
     scrollToBottom();
 }
 
-// 6. Enviar mensaje a la Serverless Function
+// 6. Enviar mensaje con protección Anti-Spam y control de cambio de personaje
 window.handleSendMessage = async function(event) {
-    event.preventDefault();
+    if (event) event.preventDefault();
+
+    // 1. BLOQUEO ANTI-SPAM: Ignorar si ya hay una petición en curso
+    if (isSending) return;
 
     const input = document.getElementById('user-input');
-    const text = input.value.trim();
+    const submitBtn = document.querySelector('#chat-form button, .chat-input-area button');
+    const text = input ? input.value.trim() : '';
+
     if (!text) return;
+
+    // Guardar qué personaje inició esta transmisión para aislar la respuesta
+    const characterId = localStorage.getItem('selectedCharacter') || 'gign';
+
+    // 2. BLOQUEAR INTERFAZ
+    isSending = true;
+    if (input) input.disabled = true;
+    if (submitBtn) submitBtn.disabled = true;
 
     let messages = loadMessages();
     const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -85,14 +119,12 @@ window.handleSendMessage = async function(event) {
     const userMsg = { role: 'user', parts: [{ text }], timestamp: timeStr };
     messages.push(userMsg);
 
-    input.value = '';
+    if (input) input.value = '';
     saveMessages(messages);
     renderMessages(messages);
     showTypingIndicator(true);
 
     try {
-        const characterId = localStorage.getItem('selectedCharacter') || 'gign';
-
         const formattedMessages = messages.map(m => ({
             role: m.role,
             parts: m.parts
@@ -107,12 +139,11 @@ window.handleSendMessage = async function(event) {
             })
         });
 
-        // Parseo seguro de JSON (evita crasheo si el servidor responde HTML en errores 503)
         let data = {};
         try {
             data = await response.json();
         } catch (jsonError) {
-            // Si no devolvió JSON
+            // Respuesta no es JSON válido
         }
 
         if (!response.ok) {
@@ -139,15 +170,32 @@ window.handleSendMessage = async function(event) {
         });
     } finally {
         showTypingIndicator(false);
-        saveMessages(messages);
-        renderMessages(messages);
+
+        // 3. GUARDAR HISTORIAL AISLADO: Garantiza que se guarde en la clave del personaje original
+        const originalKey = `cs_chat_history_${characterId}`;
+        localStorage.setItem(originalKey, JSON.stringify(messages));
+
+        // 4. SOLO ACTUALIZAR EL DOM SI EL USUARIO SIGUE EN EL MISMO PERSONAJE
+        const currentCharacter = localStorage.getItem('selectedCharacter') || 'gign';
+        if (currentCharacter === characterId) {
+            renderMessages(messages);
+        }
+
+        // 5. DESBLOQUEAR INTERFAZ
+        isSending = false;
+        if (input) {
+            input.disabled = false;
+            input.focus();
+        }
+        if (submitBtn) {
+            submitBtn.disabled = false;
+        }
     }
 };
 
 // 7. Borrar historial
 window.clearChatHistory = function() {
-    // Reproducir el sonido "Roger That"
-    const soundRoger = new Audio('assets/roger.wav'); // Usa 'assets/roger.wav' si lo mueves a esa carpeta
+    const soundRoger = new Audio('assets/roger.wav');
     soundRoger.volume = 0.8;
     soundRoger.play().catch(err => console.log("Error reproduciendo roger.wav:", err));
 
@@ -171,6 +219,7 @@ function scrollToBottom() {
 }
 
 function escapeHTML(str) {
+    if (!str) return '';
     return str.replace(/[&<>'"]/g, 
         tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
     );
