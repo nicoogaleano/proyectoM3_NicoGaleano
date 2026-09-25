@@ -38,7 +38,7 @@ const views = {
             <div id="chat-messages" class="chat-messages"></div>
             <div id="typing-indicator" class="typing-indicator">Transmitiendo señal de radio...</div>
             <form id="chat-form" class="chat-input-area" onsubmit="handleSendMessage(event)">
-                <input type="text" id="user-input" placeholder="Escribe un mensaje de radio..." autocomplete="off" required>
+                <input type="text" id="user-input" placeholder="Escribe un mensaje de radio..." autocomplete="off" />
                 <button type="submit">Enviar</button>
             </form>
         </div>

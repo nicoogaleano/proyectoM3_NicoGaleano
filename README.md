@@ -9,6 +9,7 @@
 > **Aplicación web interactiva de tipo Single Page Application (SPA)** que recrea la interfaz táctica VGUI y el sistema de comunicaciones por radio del clásico videojuego **Counter-Strike 1.6**, alimentada por la API de Google Gemini.
 
 🌐 **Demo en Vivo:** [https://proyecto-m3-nico-galeano-njwz12dwh-anonymous-f6c1.vercel.app/](https://proyecto-m3-nico-galeano-njwz12dwh-anonymous-f6c1.vercel.app/)
+[https://proyecto-m3-nico-galeano.vercel.app/] (https://proyecto-m3-nico-galeano.vercel.app/)
 
 ---
 
